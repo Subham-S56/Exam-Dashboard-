@@ -1,0 +1,4 @@
+D:
+cd "D:\Student_Exam_Dashboard_Starter\Student_Exam_Dashboard"
+python app.py
+exit

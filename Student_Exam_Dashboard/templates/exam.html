@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Exam in Progress{% endblock %}
+{% block content %}
+<div class="exam-heading"><div><p class="eyebrow">EXAM IN PROGRESS</p><h1>{{ exam.name }}</h1><p class="muted">{{ exam.batch }} · 50 questions · 1 mark each</p></div><div class="timer-box">Time left <strong id="timer">--:--</strong></div></div>
+<form method="post" action="{{ url_for('exam') }}" id="examForm">
+  <div class="exam-layout">
+    <section class="panel question-panel">
+      {% for q in exam.questions %}
+      <article class="question-card" id="question-{{ loop.index }}" {% if not loop.first %}hidden{% endif %}>
+        <div class="question-meta">Question {{ loop.index }} of {{ exam.questions|length }}</div>
+        <h2 class="question-text">{{ q.question }}</h2>
+        <div class="font-tools"><button type="button" class="secondary small" onclick="changeFont(-1)">A−</button><button type="button" class="secondary small" onclick="changeFont(1)">A+</button></div>
+        <div class="options">{% for option in q.options %}
+          <label class="option"><input type="radio" name="answer_{{ q.id }}" value="{{ loop.index0 }}"> <span>{{ option }}</span></label>
+        {% endfor %}</div>
+        <div class="question-actions">
+          <button type="button" class="secondary" onclick="showQuestion({{ loop.index - 1 }})" {% if loop.first %}disabled{% endif %}>Previous</button>
+          {% if not loop.last %}<button type="button" onclick="showQuestion({{ loop.index + 1 }})">Save &amp; Next</button>{% else %}<button type="button" onclick="showQuestion(1)">Back to First</button>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </section>
+    <aside class="panel navigator"><h3>Question Navigator</h3><div class="number-grid">
+      {% for q in exam.questions %}<button type="button" class="number-button {% if loop.first %}current{% endif %}" id="nav-{{ loop.index }}" onclick="showQuestion({{ loop.index }})">{{ loop.index }}</button>{% endfor %}
+    </div><p class="muted small-text">Green numbers indicate answered questions.</p><button type="button" class="danger full" onclick="confirmSubmit()">End Exam</button></aside>
+  </div>
+</form>
+<script>
+let currentQuestion = 1;
+let fontSize = 21;
+function showQuestion(n) {
+  const max = {{ exam.questions|length }};
+  if (n < 1 || n > max) return;
+  document.getElementById('question-' + currentQuestion).hidden = true;
+  currentQuestion = n;
+  document.getElementById('question-' + currentQuestion).hidden = false;
+  document.querySelectorAll('.number-button').forEach(b => b.classList.remove('current'));
+  document.getElementById('nav-' + n).classList.add('current');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+function changeFont(delta) {
+  fontSize = Math.min(32, Math.max(15, fontSize + delta));
+  document.querySelectorAll('.question-text').forEach(el => el.style.fontSize = fontSize + 'px');
+}
+document.querySelectorAll('.options input').forEach(input => {
+  input.addEventListener('change', () => {
+    const qid = input.name.substring(7);
+    const questionIndex = {{ exam.questions|length }};
+    document.querySelectorAll('.options input[name="' + input.name + '"]').forEach(r => {
+      if (r.checked) {
+        const card = r.closest('.question-card');
+        const n = Number(card.id.split('-')[1]);
+        document.getElementById('nav-' + n).classList.add('answered');
+      }
+    });
+  });
+});
+function confirmSubmit() {
+  if (confirm('End and submit your exam now?')) document.getElementById('examForm').submit();
+}
+let remaining = {{ duration }} * 60;
+function tick() {
+  const m = Math.floor(remaining / 60), s = remaining % 60;
+  document.getElementById('timer').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  if (remaining <= 0) {
+    alert('Time is over. Your exam will be submitted.');
+    document.getElementById('examForm').submit();
+    return;
+  }
+  remaining--;
+}
+tick();
+setInterval(tick, 1000);
+</script>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Start | Student Exam Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">EXAM MANAGEMENT</p>
+  <!-- <h1>Welcome to your exam dashboard</h1> -->
+  <h1>School Of Computer Examinations</h1>
+    <!-- <img
+      src="img\SOCLOGO.jpg"
+      alt="SOC Logo"
+      class="soc-logo"
+    > -->
+  <p>Create batches, upload your Word question bank, and review answers before students begin.</p>
+</section>
+<div class="stats">
+  <div class="stat"><span>Imported questions</span><strong>{{ bank_count }}</strong></div>
+  <div class="stat"><span>Questions needing review</span><strong>{{ review_count }}</strong></div>
+  <div class="stat"><span>Created batches</span><strong>{{ batches|length }}</strong></div>
+</div>
+<div class="two-col">
+  <section class="panel">
+    <h2>Create a new batch</h2>
+    <form method="post">
+      <input type="hidden" name="action" value="create_batch">
+      <label>Batch name</label><input name="batch_name" placeholder="e.g. Soc Batch" required>
+      <label>Exam duration (minutes)</label><input type="number" name="duration" value="30" min="1" max="300" required>
+      <button type="submit">Create Batch</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>Upload question bank</h2>
+    <p>Upload your Word document. Bold options are used as the answer key when exactly one option is bold.</p>
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="action" value="upload_bank">
+      <label>Word document (.docx)</label><input type="file" name="question_file" accept=".docx" required>
+      <button type="submit">Import Questions</button>
+    </form>
+    <a class="text-link" href="{{ url_for('review_questions') }}">Review imported questions →</a>
+  </section>
+</div>
+<section class="panel">
+  <h2>Batch results</h2>
+  {% if batches %}
+    <p>Excel files are saved in the project's <code>results</code> folder.</p>
+    <div class="batch-list">{% for batch in batches %}
+      <div class="batch-row"><span>{{ batch }}</span><span class="muted">Excel results enabled</span></div>
+    {% endfor %}</div>
+  {% else %}<p class="muted">No batches created yet.</p>{% endif %}
+</section>
+<section class="panel callout">
+  <h2>Student exam</h2>
+  <p>Students receive 50 random questions. Each correct answer earns 1 mark.</p>
+  <a class="button-link" href="{{ url_for('student_entry') }}">Open Student Entry</a>
+</section>
+{% endblock %}

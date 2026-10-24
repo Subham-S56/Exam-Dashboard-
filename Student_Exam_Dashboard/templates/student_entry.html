@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Student Entry{% endblock %}
+{% block content %}
+<section class="panel narrow">
+  <p class="eyebrow">STUDENT PORTAL</p><h1>Enter your exam details</h1>
+  <p class="muted">Check your name and user ID carefully before starting.</p>
+  <form method="post">
+    <label>Student name</label><input name="student_name" required autocomplete="name">
+    <label>Batch</label><select name="batch" required><option value="">Choose your batch</option>{% for batch in batches %}<option value="{{ batch }}">{{ batch }}</option>{% endfor %}</select>
+    <label>User ID</label><input name="user_id" required>
+    <button type="submit" {% if not batches %}disabled{% endif %}>Start Exam</button>
+    {% if not batches %}<p class="muted">No batches are available yet. Ask the person managing the dashboard to create one.</p>{% endif %}
+  </form>
+</section>
+{% endblock %}
