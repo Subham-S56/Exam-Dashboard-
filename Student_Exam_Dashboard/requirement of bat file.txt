@@ -1,4 +1,11 @@
-D:
-cd "D:\Student_Exam_Dashboard_Starter\Student_Exam_Dashboard"
-python app.py
+
+@echo off
+cd /d "D:\Student_Exam_Dashboard_Starter\Student_Exam_Dashboard"
+
+start "SOC Dashboard Server" cmd /k "python app.py"
+
+timeout /t 4 /nobreak >nul
+
+start "" "http://127.0.0.1:5000"
+
 exit
