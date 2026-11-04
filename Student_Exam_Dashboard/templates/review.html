@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Review Question Bank{% endblock %}
+{% block content %}
+<section class="hero"><p class="eyebrow">QUESTION BANK</p><h1>Review imported questions</h1><p>Questions with exactly one bold option are pre-selected. For any question needing review, choose the correct answer yourself.</p></section>
+{% if questions %}
+<form method="post">
+  {% for q in questions %}
+  <section class="panel review-card">
+    <div class="review-heading"><span>Question {{ loop.index }}</span><span class="status {% if q.review_status == 'ready' %}ready{% else %}needs-review{% endif %}">{{ 'Ready' if q.review_status == 'ready' else 'Needs review' }}</span></div>
+    <h3>{{ q.question }}</h3>
+    <div class="review-options">
+      {% for option in q.options %}
+      <label><input type="radio" name="correct_{{ q.id }}" value="{{ loop.index0 }}" {% if q.correct_index == loop.index0 %}checked{% endif %}> {{ option }} {% if loop.index0 == q.correct_index and q.correct_index is not none %}<span class="muted">(selected answer)</span>{% endif %}</label>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+  <button type="submit">Save Answer Key</button>
+</form>
+{% else %}
+<section class="panel"><p>No questions imported yet. Go back to the start page and upload the Word document.</p></section>
+{% endif %}
+{% endblock %}

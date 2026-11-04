@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Start | Student Exam Dashboard{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">EXAM MANAGEMENT</p>
+  <!-- <h1>Welcome to your exam dashboard</h1> -->
+  <h1>School Of Computer Examinations</h1>
+    <!-- <img
+      src="img\SOCLOGO.jpg"
+      alt="SOC Logo"
+      class="soc-logo"
+    > -->
+  <p>Create batches, upload your Word question bank, and review answers before students begin.</p>
+</section>
+<div class="stats">
+  <div class="stat"><span>Imported questions</span><strong>{{ bank_count }}</strong></div>
+  <div class="stat"><span>Questions needing review</span><strong>{{ review_count }}</strong></div>
+  <div class="stat"><span>Created batches</span><strong>{{ batches|length }}</strong></div>
+</div>
+<div class="two-col">
+  <section class="panel">
+    <h2>Create a new batch</h2>
+    <form method="post">
+      <input type="hidden" name="action" value="create_batch">
+      <label>Batch name</label><input name="batch_name" placeholder="e.g. Soc Batch" required>
+      <button type="submit">Create Batch</button>
+    </form>
+  </section>
+  <section class="panel">
+    <h2>Upload question bank</h2>
+    <p>Upload your Word document. Bold options are used as the answer key when exactly one option is bold.</p>
+    <form method="post" enctype="multipart/form-data">
+      <input type="hidden" name="action" value="upload_bank">
+      <label>Word document (.docx)</label><input type="file" name="question_file" accept=".docx" required>
+      <button type="submit">Import Questions</button>
+    </form>
+    <a class="text-link" href="{{ url_for('review_questions') }}">Review imported questions →</a>
+  </section>
+</div>
+<section class="panel">
+  <h2>Exam settings</h2>
+  <p>These settings apply to every batch. Batch creation remains unchanged.</p>
+  <form method="post" class="exam-settings-form">
+    <input type="hidden" name="action" value="save_exam_settings">
+    <label>Number of questions per student</label>
+    <input type="number" name="question_count" value="{{ exam_settings.get('question_count', 50) }}" min="1" max="200" required>
+    <label>Total exam duration (minutes)</label>
+    <input type="number" name="duration" value="{{ exam_settings.get('duration', 30) }}" min="1" max="300" required>
+    <p class="muted small-text">Both values are controlled manually and independently.</p>
+    <button type="submit">Save exam settings</button>
+  </form>
+</section>
+<section class="panel">
+  <h2>Batch results</h2>
+  {% if batches %}
+    <p>Excel files are saved in the project's <code>results</code> folder.</p>
+    <div class="batch-list">{% for batch in batches %}
+      <div class="batch-row"><span>{{ batch }}</span><span class="muted">Excel results enabled</span></div>
+    {% endfor %}</div>
+  {% else %}<p class="muted">No batches created yet.</p>{% endif %}
+</section>
+<section class="panel callout">
+  <h2>Student exam</h2>
+  <p>Students receive the number of random questions configured in Exam Settings. Each correct answer earns 1 mark.</p>
+  <a class="button-link" href="{{ url_for('student_entry') }}">Open Student Entry</a>
+</section>
+{% endblock %}

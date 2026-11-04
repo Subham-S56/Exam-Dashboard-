@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Student Exam Dashboard{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">Soc Student Exam Dashboard</div>
+     <nav><a href="{{ url_for('home') }}">Start</a><a href="{{ url_for('student_entry') }}">Student Exam</a></nav>  <!-- <a href="{{ url_for('review_questions') }}">Review Questions</a> -->
+  </header>
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for category, message in messages %}
+        <div class="notice {{ category }}">{{ message }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="soc-footer">
+    <strong>SOC — School of Computer</strong>
+    <br>
+    Student Exam Portal | Secure, simple, and efficient online assessments.
+    <br>
+    &copy; 2026 SOC. All rights reserved.
+</footer>
+</body>
+</html>

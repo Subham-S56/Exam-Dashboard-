@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Exam Result{% endblock %}
+{% block content %}
+<section class="panel result-card">
+  <div class="result-icon">✓</div><p class="eyebrow">EXAM SUBMITTED</p><h1>Well done, {{ result.name }}!</h1>
+  <p>Your result has been saved to the Excel file for your batch.</p>
+  <div class="score"><strong>{{ result.marks }}</strong><span>/ {{ result.total }} marks</span></div>
+  <p><b>Batch:</b> {{ result.batch }} &nbsp; <b>User ID:</b> {{ result.user_id }}</p>
+  <a class="button-link" href="{{ url_for('student_entry') }}">Back to Start</a>
+</section>
+{% endblock %}
